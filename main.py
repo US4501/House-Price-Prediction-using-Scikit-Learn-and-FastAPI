@@ -4,14 +4,16 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel,Field
 import pandas as pd
 import io
+from pathlib import Path
 
 
 app=FastAPI(title="California House Price API")
 
 # load data 
-model=joblib.load(r"C:\Users\UTKARSH SINGH\Downloads\House Price Predicttion With Scikit Learn\house_model_joblib")
-features=joblib.load(r"C:\Users\UTKARSH SINGH\Downloads\House Price Predicttion With Scikit Learn\house_features_joblib")
-#r before the string makes it a raw string, so Python treats the backslashes as ordinary characters.
+BASE = Path(__file__).parent
+model = joblib.load(BASE / "house_model_joblib")
+features = joblib.load(BASE / "house_features_joblib")
+
 
 # check is loaded or not
 print(model)
@@ -61,7 +63,7 @@ def predict(house: HouseFeatures):
         return {
             "predicted_price": f"${price_usd:,.0f}",
             "predicted_price_short": f"${predicted:.2f} hundred thousands",
-            "confidence_range": f"${price_usd - 32,773:,.0f} to ${price_usd + 32,773:,.0f}",
+            "confidence_range": f"${price_usd - 32773:,.0f} to ${price_usd + 32773:,.0f}",
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
